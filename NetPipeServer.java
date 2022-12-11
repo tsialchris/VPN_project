@@ -94,7 +94,7 @@ public class NetPipeServer {
 		}
 		catch(Exception e){e.printStackTrace();}
 		
-		byte[] received_certbytes = received_certificate_string.getBytes();
+		byte[] received_certbytes = Base64.getDecoder().decode(received_certificate_string);
 		
 		HandshakeCertificate received_certificate = new HandshakeCertificate(received_certbytes);
 		
@@ -218,8 +218,8 @@ public class NetPipeServer {
 		}
 		catch(Exception e){e.printStackTrace();}
 		
-		byte[] encrypted_received_sigbytes = received_signature_string.getBytes();
-		byte[] encrypted_received_timebytes = received_signature_string.getBytes();
+		byte[] encrypted_received_sigbytes = Base64.getDecoder().decode(received_signature_string.getBytes());
+		byte[] encrypted_received_timebytes = Base64.getDecoder().decode(received_signature_string.getBytes());
 		//now we create the public_client_cryptoknight, that uses the client's public key to decrypt the data
 		HandshakeCrypto public_client_cryptoknight = new HandshakeCrypto(received_certificate);
 		byte[] received_sigbytes = public_client_cryptoknight.decrypt(encrypted_received_sigbytes);

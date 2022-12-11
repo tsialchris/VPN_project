@@ -124,11 +124,12 @@ public class NetPipeClient {
 		String received_certificate_string = null;
 		try{
 			received_certificate_string = handshake_message_2.getParameter("Certificate");
+			//System.out.println("This is the received_certificate_string: " + received_certificate_string);
 		}
 		catch(Exception e){e.printStackTrace();}
-		
-		byte[] received_certbytes = received_certificate_string.getBytes();
-		
+		//System.out.println("This is the received_certificate_string: " + received_certificate_string);
+		byte[] received_certbytes = Base64.getDecoder().decode(received_certificate_string);
+		System.out.println("These are the received_certbytes: " + received_certbytes);
 		HandshakeCertificate received_certificate = new HandshakeCertificate(received_certbytes);
 		
 		//verify the server certificate, with the help of the CA certificate//
@@ -245,8 +246,8 @@ public class NetPipeClient {
 		}
 		catch(Exception e){e.printStackTrace();}
 		
-		byte[] encrypted_received_sigbytes = received_signature_string.getBytes();
-		byte[] encrypted_received_timebytes = received_signature_string.getBytes();
+		byte[] encrypted_received_sigbytes = Base64.getDecoder().decode(received_signature_string);
+		byte[] encrypted_received_timebytes = Base64.getDecoder().decode(received_signature_string);
 		//now decrypt the received data, using the server's public key
 		byte[] received_sigbytes = public_server_cryptoknight.decrypt(encrypted_received_sigbytes);
 		byte[] received_timebytes = public_server_cryptoknight.decrypt(encrypted_received_timebytes);
