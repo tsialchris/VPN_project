@@ -115,7 +115,7 @@ public class NetPipeClient {
 		
 		//2nd step, wait for response from the server and validate the server certificate//
 		
-		HandshakeMessage handshake_message_2 = new HandshakeMessage(HandshakeMessage.MessageType.SERVERHELLO);
+		HandshakeMessage handshake_message_2 = null;
 		try{
 			handshake_message_2 = handshake_message_2.recv(socket);
 		}
@@ -197,15 +197,16 @@ public class NetPipeClient {
 		//create the private_client_cryptoknight, will be used later to encrypt the hash and the TimeStamp
 		HandshakeCrypto private_client_cryptoknight = new HandshakeCrypto(keybytes);
 		
-		//digest all messages (ClientHello and Session message)
+		//digest (ClientHello and Session message)
 		HandshakeDigest handshake_digest = new HandshakeDigest();
 		try{
 			handshake_digest.update(handshake_message_1.getBytes());
-			handshake_digest.update(handshake_message_2.getBytes());
 			handshake_digest.update(handshake_message_3.getBytes());
 		}
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest = handshake_digest.digest();
+		
+		System.out.println("MD1(local): " + final_digest);
 		
 		//get current TimeStamp
 		Instant now = Instant.now();
@@ -233,7 +234,7 @@ public class NetPipeClient {
 		
 		//done sending, now waiting and then checking//
 		
-		HandshakeMessage handshake_message_5 = new HandshakeMessage(HandshakeMessage.MessageType.SERVERFINISHED);
+		HandshakeMessage handshake_message_5 = null;
 		try{
 			handshake_message_5 = handshake_message_5.recv(socket);
 		}
@@ -253,12 +254,10 @@ public class NetPipeClient {
 		byte[] received_sigbytes = public_server_cryptoknight.decrypt(encrypted_received_sigbytes);
 		byte[] received_timebytes = public_server_cryptoknight.decrypt(encrypted_received_timebytes);
 		
-		//create a hash all the messages exchanged with the server and compare it with the hash received now
+		//create a hash out of the serverHELLO and compare it with the hash received now
 		HandshakeDigest digest_1 = new HandshakeDigest();
 		try{
-			digest_1.update(handshake_message_1.getBytes());
 			digest_1.update(handshake_message_2.getBytes());
-			digest_1.update(handshake_message_3.getBytes());
 		}
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest_1 = digest_1.digest();

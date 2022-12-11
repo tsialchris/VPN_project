@@ -81,7 +81,7 @@ public class NetPipeServer {
 		
 		//execute_handshake//
 		
-		HandshakeMessage handshake_message_1 = new HandshakeMessage(HandshakeMessage.MessageType.CLIENTHELLO);
+		HandshakeMessage handshake_message_1 = null;
 		try{
 			handshake_message_1 = handshake_message_1.recv(socket);
 		}
@@ -153,7 +153,7 @@ public class NetPipeServer {
 			decrypt them using our private key and create the necessary objects
 		*/
 		
-		HandshakeMessage handshake_message_3 = new HandshakeMessage(HandshakeMessage.MessageType.SESSION);
+		HandshakeMessage handshake_message_3 = null;
 		try{
 			handshake_message_3 = handshake_message_3.recv(socket);
 		}
@@ -208,7 +208,7 @@ public class NetPipeServer {
 		
 		//now receiving and then checking//
 		
-		HandshakeMessage handshake_message_4 = new HandshakeMessage(HandshakeMessage.MessageType.CLIENTFINISHED);
+		HandshakeMessage handshake_message_4 = null;
 		try{
 			handshake_message_4 = handshake_message_4.recv(socket);
 		}
@@ -229,15 +229,14 @@ public class NetPipeServer {
 		byte[] received_sigbytes = public_client_cryptoknight.decrypt(encrypted_received_sigbytes);
 		byte[] received_timebytes = public_client_cryptoknight.decrypt(encrypted_received_timebytes);
 		
-		//create a hash of all the messages in the exchange and compare it with the hash received now
+		//create a hash of the ServerHello message and compare it with the hash received now
 		HandshakeDigest digest_1 = new HandshakeDigest();
 		try{
-			digest_1.update(handshake_message_1.getBytes());
 			digest_1.update(handshake_message_2.getBytes());
-			digest_1.update(handshake_message_3.getBytes());
 		}
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest_1 = digest_1.digest();
+		
 		if(Arrays.equals(final_digest_1, received_sigbytes)){
 			System.out.println("Hashes match, proceeding with connection...");
 		}
@@ -261,11 +260,10 @@ public class NetPipeServer {
 		
 		//done receiving and checking, now sending//
 		
-		//digest all first 3 messages (ServerHello)
+		//digest the client's messages and compate (ClientHello, SessionMessage)
 		HandshakeDigest handshake_digest = new HandshakeDigest();
 		try{
 			handshake_digest.update(handshake_message_1.getBytes());
-			handshake_digest.update(handshake_message_2.getBytes());
 			handshake_digest.update(handshake_message_3.getBytes());
 		}
 		catch(Exception e){e.printStackTrace();}
