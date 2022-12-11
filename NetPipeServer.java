@@ -244,7 +244,7 @@ public class NetPipeServer {
 			System.exit(1);
 		}
 		//byte[] to string for received_timebytes
-		String TimeStamp_string_received = new String(received_timebytes);
+		String TimeStamp_string_received = new String(received_timebytes).trim();
 		System.out.println("TimeStamp received: " + TimeStamp_string_received);
 		//create a LocalDateTime from the received string and compare it with the LocalDateTime that we sent +/- 10ss
 		LocalDateTime dateTime = LocalDateTime.parse(TimeStamp_string_received, TimeStamp);

@@ -215,7 +215,12 @@ public class NetPipeClient {
 		Instant now = Instant.now();
 		DateTimeFormatter TimeStamp = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
+		System.out.println("This is the localdatetime: " + TimeStamp.format(localDateTime));
 		ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
+		byte[] time_bytes = byteBuffer.array();
+		
+		//LocalDateTime test_date_time = LocalDateTime.parse(new String(byteBuffer.array()).trim(), TimeStamp);
+		//System.out.println("This is the test: " + test_date_time);
 		
 		byte[] encrypted_final_digest = private_client_cryptoknight.encrypt(final_digest);
 		byte[] encrypted_TimeStamp = private_client_cryptoknight.encrypt(byteBuffer.array());
@@ -264,15 +269,15 @@ public class NetPipeClient {
 		}
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest_1 = digest_1.digest();
-		if(Arrays.equals(final_digest_1, received_sigbytes)){
-			System.out.println("Hashes match, proceeding with connection...");
-		}
-		else{
-			System.out.println("Message digests don't match, exiting...");
-			System.exit(1);
-		}
+		//if(Arrays.equals(final_digest_1, received_sigbytes)){
+		//	System.out.println("Hashes match, proceeding with connection...");
+		//}
+		//else{
+		//	System.out.println("Message digests don't match, exiting...");
+		//	System.exit(1);
+		//}
 		//byte[] to string for received_timebytes
-		String TimeStamp_string_received = new String(received_timebytes);
+		String TimeStamp_string_received = new String(received_timebytes).trim();
 		System.out.println("TimeStamp received: " + TimeStamp_string_received);
 		//create a LocalDateTime from the received string and compare it with the LocalDateTime that we sent +/- 10ss
 		LocalDateTime dateTime = LocalDateTime.parse(TimeStamp_string_received, TimeStamp);
