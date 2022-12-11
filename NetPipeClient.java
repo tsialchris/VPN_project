@@ -129,7 +129,7 @@ public class NetPipeClient {
 		catch(Exception e){e.printStackTrace();}
 		//System.out.println("This is the received_certificate_string: " + received_certificate_string);
 		byte[] received_certbytes = Base64.getDecoder().decode(received_certificate_string);
-		System.out.println("These are the received_certbytes: " + received_certbytes);
+		//System.out.println("These are the received_certbytes: " + received_certbytes);
 		HandshakeCertificate received_certificate = new HandshakeCertificate(received_certbytes);
 		
 		//verify the server certificate, with the help of the CA certificate//
@@ -197,10 +197,11 @@ public class NetPipeClient {
 		//create the private_client_cryptoknight, will be used later to encrypt the hash and the TimeStamp
 		HandshakeCrypto private_client_cryptoknight = new HandshakeCrypto(keybytes);
 		
-		//only digest messages 1 and 3 (ClientHello and Session message)
+		//digest all messages (ClientHello and Session message)
 		HandshakeDigest handshake_digest = new HandshakeDigest();
 		try{
 			handshake_digest.update(handshake_message_1.getBytes());
+			handshake_digest.update(handshake_message_2.getBytes());
 			handshake_digest.update(handshake_message_3.getBytes());
 		}
 		catch(Exception e){e.printStackTrace();}
