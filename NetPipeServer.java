@@ -217,12 +217,12 @@ public class NetPipeServer {
 		String received_timestamp_string = null;
 		try{
 			received_signature_string = handshake_message_4.getParameter("Signature");
-			received_signature_string = handshake_message_4.getParameter("TimeStamp");
+			received_timestamp_string = handshake_message_4.getParameter("TimeStamp");
 		}
 		catch(Exception e){e.printStackTrace();}
 		
 		byte[] encrypted_received_sigbytes = Base64.getDecoder().decode(received_signature_string.getBytes());
-		byte[] encrypted_received_timebytes = Base64.getDecoder().decode(received_signature_string.getBytes());
+		byte[] encrypted_received_timebytes = Base64.getDecoder().decode(received_timestamp_string.getBytes());
 		//now we create the public_client_cryptoknight, that uses the client's public key to decrypt the data
 		HandshakeCrypto public_client_cryptoknight = new HandshakeCrypto(received_certificate);
 		byte[] received_sigbytes = public_client_cryptoknight.decrypt(encrypted_received_sigbytes);
