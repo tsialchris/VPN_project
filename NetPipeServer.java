@@ -95,7 +95,6 @@ public class NetPipeServer {
 		catch(Exception e){e.printStackTrace();}
 		
 		byte[] received_certbytes = Base64.getDecoder().decode(received_certificate_string);
-		
 		HandshakeCertificate received_certificate = new HandshakeCertificate(received_certbytes);
 		
 		//verify the client certificate, with the help of the CA certificate//
