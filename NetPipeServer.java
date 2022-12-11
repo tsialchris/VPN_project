@@ -182,8 +182,8 @@ public class NetPipeServer {
 		}
 		catch(Exception e){e.printStackTrace();}
 		
-		byte[] encrypted_session_key = encrypted_session_key_string.getBytes();
-		byte[] encrypted_session_IV = encrypted_IV_string.getBytes();
+		byte[] encrypted_session_key = Base64.getDecoder().decode(encrypted_session_key_string);
+		byte[] encrypted_session_IV = Base64.getDecoder().decode(encrypted_IV_string);
 		//read the received data//
 		
 		//use the de-crypter to decrypt the session_key and the IV
