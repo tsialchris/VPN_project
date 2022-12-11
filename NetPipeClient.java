@@ -247,12 +247,12 @@ public class NetPipeClient {
 		String received_timestamp_string = null;
 		try{
 			received_signature_string = handshake_message_5.getParameter("Signature");
-			received_signature_string = handshake_message_5.getParameter("TimeStamp");
+			received_timestamp_string = handshake_message_5.getParameter("TimeStamp");
 		}
 		catch(Exception e){e.printStackTrace();}
 		
 		byte[] encrypted_received_sigbytes = Base64.getDecoder().decode(received_signature_string);
-		byte[] encrypted_received_timebytes = Base64.getDecoder().decode(received_signature_string);
+		byte[] encrypted_received_timebytes = Base64.getDecoder().decode(received_timestamp_string);
 		//now decrypt the received data, using the server's public key
 		byte[] received_sigbytes = public_server_cryptoknight.decrypt(encrypted_received_sigbytes);
 		byte[] received_timebytes = public_server_cryptoknight.decrypt(encrypted_received_timebytes);
@@ -264,13 +264,13 @@ public class NetPipeClient {
 		}
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest_1 = digest_1.digest();
-		//if(Arrays.equals(final_digest_1, received_sigbytes)){
-		//	System.out.println("Hashes match, proceeding with connection...");
-		//}
-		//else{
-		//	System.out.println("Message digests don't match, exiting...");
-		//	System.exit(1);
-		//}
+		if(Arrays.equals(final_digest_1, received_sigbytes)){
+			System.out.println("Hashes match, proceeding with connection...");
+		}
+		else{
+			System.out.println("Message digests don't match, exiting...");
+			System.exit(1);
+		}
 		//byte[] to string for received_timebytes
 		String TimeStamp_string_received = new String(received_timebytes);
 		System.out.println("TimeStamp received: " + TimeStamp_string_received);
