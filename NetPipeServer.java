@@ -154,6 +154,10 @@ public class NetPipeServer {
 		*/
 		
 		HandshakeMessage handshake_message_3 = new HandshakeMessage(HandshakeMessage.MessageType.SESSION);
+		try{
+			handshake_message_3 = handshake_message_3.recv(socket);
+		}
+		catch(Exception e){e.printStackTrace();}
 		byte[] keybytes = null;
 		//first we read our private key from the file that was provided//
 		/* Read the key from file */
