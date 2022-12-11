@@ -229,10 +229,11 @@ public class NetPipeServer {
 		byte[] received_sigbytes = public_client_cryptoknight.decrypt(encrypted_received_sigbytes);
 		byte[] received_timebytes = public_client_cryptoknight.decrypt(encrypted_received_timebytes);
 		
-		//create a hash of the message received from the client and compare it with the hash received now
+		//create a hash of all the messages in the exchange and compare it with the hash received now
 		HandshakeDigest digest_1 = new HandshakeDigest();
 		try{
 			digest_1.update(handshake_message_1.getBytes());
+			digest_1.update(handshake_message_2.getBytes());
 			digest_1.update(handshake_message_3.getBytes());
 		}
 		catch(Exception e){e.printStackTrace();}
@@ -260,10 +261,12 @@ public class NetPipeServer {
 		
 		//done receiving and checking, now sending//
 		
-		//only digest message 2 (ServerHello)
+		//digest all first 3 messages (ServerHello)
 		HandshakeDigest handshake_digest = new HandshakeDigest();
 		try{
+			handshake_digest.update(handshake_message_1.getBytes());
 			handshake_digest.update(handshake_message_2.getBytes());
+			handshake_digest.update(handshake_message_3.getBytes());
 		}
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest = handshake_digest.digest();
