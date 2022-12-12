@@ -216,7 +216,7 @@ public class NetPipeClient {
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest = handshake_digest.digest();
 		
-		System.out.println("MD1(local): " + Arrays.toString(final_digest));
+		//System.out.println("MD1(local): " + Arrays.toString(final_digest));
 		
 		//get current TimeStamp
 		Instant now = Instant.now();
