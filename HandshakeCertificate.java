@@ -33,7 +33,7 @@ public class HandshakeCertificate {
 			CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
 			cert = (X509Certificate)certFactory.generateCertificate(instream);
 		}
-		catch(Exception e){e.printStackTrace();}
+		catch(Exception e){}
 		//try{
 		//	cert = X509Certificate.getInstance(instream);
 		//}
@@ -50,7 +50,7 @@ public class HandshakeCertificate {
 			InputStream instream = new ByteArrayInputStream(certbytes);
 			cert = (X509Certificate)certFactory.generateCertificate(instream);
 		}
-		catch(Exception e){e.printStackTrace();}
+		catch(Exception e){}
 		//try{
 		//	cert = X509Certificate.getInstance(certbytes);
 		//}
@@ -171,7 +171,7 @@ public class HandshakeCertificate {
 		int j = 0;
 		boolean found_mail = false;
 		
-		//try{
+		try{
 			while(true){
 				//EMAILADDRESS=
 				if(temp.charAt(i) == 'E'){
@@ -212,8 +212,8 @@ public class HandshakeCertificate {
 				
 				i = i + 1;
 			}
-		//}
-		//catch(Exception e){}
+		}
+		catch(Exception e){}
 		
 		//trim the mail_char[] array
 		//calculate the actual length
