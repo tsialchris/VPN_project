@@ -118,11 +118,18 @@ public class NetPipeClient {
 		
 		//2nd step, wait for response from the server and validate the server certificate//
 		
+		//HandshakeMessage handshake_message_2 = new HandshakeMessage(HandshakeMessage.MessageType.SERVERHELLO);
 		HandshakeMessage handshake_message_2 = null;
 		try{
 			handshake_message_2 = handshake_message_2.recv(socket);
 		}
 		catch(Exception e){e.printStackTrace();}
+		
+		//validating message type
+		if(handshake_message_2.getType().getCode() != 2){
+			System.out.println("Invalid MessageType, expected 2, got: " + handshake_message_2.getType().getCode());
+			System.exit(1);
+		}
 		
 		String received_certificate_string = null;
 		try{
@@ -247,6 +254,12 @@ public class NetPipeClient {
 			handshake_message_5 = handshake_message_5.recv(socket);
 		}
 		catch(Exception e){e.printStackTrace();}
+		
+		//validating message type
+		if(handshake_message_5.getType().getCode() != 5){
+			System.out.println("Invalid MessageType, expected 5, got: " + handshake_message_5.getType().getCode());
+			System.exit(1);
+		}
 		
 		String received_signature_string = null;
 		String received_timestamp_string = null;

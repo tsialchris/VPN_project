@@ -87,6 +87,12 @@ public class NetPipeServer {
 		}
 		catch(Exception e){e.printStackTrace();}
 		
+		//validating message type
+		if(handshake_message_1.getType().getCode() != 1){
+			System.out.println("Invalid MessageType, expected 1, got: " + handshake_message_1.getType().getCode());
+			System.exit(1);
+		}
+		
 		//1st step, receive the client certificate in String, convert it to HandshakeCertificate and verify it//
 		String received_certificate_string = null;
 		try{
@@ -157,6 +163,13 @@ public class NetPipeServer {
 			handshake_message_3 = handshake_message_3.recv(socket);
 		}
 		catch(Exception e){e.printStackTrace();}
+		
+		//validating message type
+		if(handshake_message_3.getType().getCode() != 3){
+			System.out.println("Invalid MessageType, expected 3, got: " + handshake_message_3.getType().getCode());
+			System.exit(1);
+		}
+		
 		byte[] keybytes = null;
 		//first we read our private key from the file that was provided//
 		/* Read the key from file */
@@ -212,6 +225,12 @@ public class NetPipeServer {
 			handshake_message_4 = handshake_message_4.recv(socket);
 		}
 		catch(Exception e){e.printStackTrace();}
+		
+		//validating message type
+		if(handshake_message_4.getType().getCode() != 4){
+			System.out.println("Invalid MessageType, expected 4, got: " + handshake_message_4.getType().getCode());
+			System.exit(1);
+		}
 		
 		String received_signature_string = null;
 		String received_timestamp_string = null;
