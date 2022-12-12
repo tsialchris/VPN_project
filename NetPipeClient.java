@@ -282,13 +282,13 @@ public class NetPipeClient {
 		}
 		catch(Exception e){e.printStackTrace();}
 		byte[] final_digest_1 = digest_1.digest();
-		//if(Arrays.equals(final_digest_1, received_sigbytes)){
-		//	System.out.println("Hashes match, proceeding with connection...");
-		//}
-		//else{
-		//	System.out.println("Message digests don't match, exiting...");
-		//	System.exit(1);
-		//}
+		if(Arrays.equals(final_digest_1, received_sigbytes)){
+			System.out.println("Hashes match, proceeding with connection...");
+		}
+		else{
+			System.out.println("Message digests don't match, exiting...");
+			System.exit(1);
+		}
 		//byte[] to string for received_timebytes
 		String TimeStamp_string_received = new String(received_timebytes).trim();
 		System.out.println("TimeStamp received: " + TimeStamp_string_received);
