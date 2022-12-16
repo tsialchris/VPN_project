@@ -143,7 +143,7 @@ public class NetPipeServer {
 		
 		//wait for 0.2 second before sending this message
 		try{
-			Thread.sleep(200);
+			//Thread.sleep(200);
 		}
 		catch(Exception e){e.printStackTrace();}
 		
@@ -290,10 +290,16 @@ public class NetPipeServer {
 		//get a new current TimeStamp
 		//Instant now = Instant.now();
 		//localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
-		ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
+		//ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
+		
+		//new//
+		String time_string = TimeStamp.format(localDateTime);
+		//new//
+		
+		byte[] time_bytes = time_string.getBytes();
 		
 		byte[] encrypted_final_digest = private_server_cryptoknight.encrypt(final_digest);
-		byte[] encrypted_TimeStamp = private_server_cryptoknight.encrypt(byteBuffer.array());
+		byte[] encrypted_TimeStamp = private_server_cryptoknight.encrypt(time_bytes);
 		
 		HandshakeMessage handshake_message_5 = new HandshakeMessage(HandshakeMessage.MessageType.SERVERFINISHED);
 		
@@ -301,7 +307,7 @@ public class NetPipeServer {
 		handshake_message_5.putParameter("TimeStamp", Base64.getEncoder().encodeToString(encrypted_TimeStamp));
 		
 		try{
-			Thread.sleep(200);
+			//Thread.sleep(200);
 		}
 		catch(Exception e){e.printStackTrace();}
 		

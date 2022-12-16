@@ -106,7 +106,7 @@ public class NetPipeClient {
 		
 		//wait for 0.2 second before sending this message
 		try{
-			Thread.sleep(200);
+			//Thread.sleep(200);
 		}
 		catch(Exception e){e.printStackTrace();}
 		
@@ -176,7 +176,7 @@ public class NetPipeClient {
 		
 		//wait for 0.2 second before sending this message
 		try{
-			Thread.sleep(200);
+			//Thread.sleep(200);
 		}
 		catch(Exception e){e.printStackTrace();}
 		
@@ -223,14 +223,19 @@ public class NetPipeClient {
 		DateTimeFormatter TimeStamp = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
 		System.out.println("This is the localdatetime: " + TimeStamp.format(localDateTime));
-		ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
-		byte[] time_bytes = byteBuffer.array();
+		//ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
+		
+		//new//
+		String time_string = TimeStamp.format(localDateTime);
+		//new//
+		
+		byte[] time_bytes = time_string.getBytes();
 		
 		//LocalDateTime test_date_time = LocalDateTime.parse(new String(byteBuffer.array()).trim(), TimeStamp);
 		//System.out.println("This is the test: " + test_date_time);
 		
 		byte[] encrypted_final_digest = private_client_cryptoknight.encrypt(final_digest);
-		byte[] encrypted_TimeStamp = private_client_cryptoknight.encrypt(byteBuffer.array());
+		byte[] encrypted_TimeStamp = private_client_cryptoknight.encrypt(time_bytes);
 		
 		HandshakeMessage handshake_message_4 = new HandshakeMessage(HandshakeMessage.MessageType.CLIENTFINISHED);
 		
@@ -238,7 +243,7 @@ public class NetPipeClient {
 		handshake_message_4.putParameter("TimeStamp", Base64.getEncoder().encodeToString(encrypted_TimeStamp));
 		
 		try{
-			Thread.sleep(200);
+			//Thread.sleep(200);
 		}
 		catch(Exception e){e.printStackTrace();}
 		
