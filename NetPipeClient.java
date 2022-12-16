@@ -190,7 +190,7 @@ public class NetPipeClient {
 			and send them to the server
 		*/
 		
-		//4th step, send our own Signature (hash of all messages sent) and Timestamp, then wait for the server's//
+		//4th step, wait for the server's Signature (hash of all messages sent) and Timestamp, then send our own//
 		byte[] keybytes = null;
 		//first we read our private key from the file that was provided//
 		try{
@@ -207,52 +207,9 @@ public class NetPipeClient {
 		//create the private_client_cryptoknight, will be used later to encrypt the hash and the TimeStamp
 		HandshakeCrypto private_client_cryptoknight = new HandshakeCrypto(keybytes);
 		
-		//digest (ClientHello and Session message)
-		HandshakeDigest handshake_digest = new HandshakeDigest();
-		try{
-			handshake_digest.update(handshake_message_1.getBytes());
-			handshake_digest.update(handshake_message_3.getBytes());
-		}
-		catch(Exception e){e.printStackTrace();}
-		byte[] final_digest = handshake_digest.digest();
+		//-------------------------------------------pasted step---------------------------------------//
 		
-		//System.out.println("MD1(local): " + Arrays.toString(final_digest));
-		
-		//get current TimeStamp
-		Instant now = Instant.now();
-		DateTimeFormatter TimeStamp = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
-		LocalDateTime localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
-		System.out.println("This is the localdatetime: " + TimeStamp.format(localDateTime));
-		//ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
-		
-		//new//
-		String time_string = TimeStamp.format(localDateTime);
-		//new//
-		
-		byte[] time_bytes = time_string.getBytes();
-		
-		//LocalDateTime test_date_time = LocalDateTime.parse(new String(byteBuffer.array()).trim(), TimeStamp);
-		//System.out.println("This is the test: " + test_date_time);
-		
-		byte[] encrypted_final_digest = private_client_cryptoknight.encrypt(final_digest);
-		byte[] encrypted_TimeStamp = private_client_cryptoknight.encrypt(time_bytes);
-		
-		HandshakeMessage handshake_message_4 = new HandshakeMessage(HandshakeMessage.MessageType.CLIENTFINISHED);
-		
-		handshake_message_4.putParameter("Signature", Base64.getEncoder().encodeToString(encrypted_final_digest));
-		handshake_message_4.putParameter("TimeStamp", Base64.getEncoder().encodeToString(encrypted_TimeStamp));
-		
-		try{
-			//Thread.sleep(200);
-		}
-		catch(Exception e){e.printStackTrace();}
-		
-		try{
-			handshake_message_4.send(socket);
-		}
-		catch(Exception e){e.printStackTrace();}
-		
-		//done sending, now waiting and then checking//
+		//now receiving and then checking//
 		
 		HandshakeMessage handshake_message_5 = null;
 		try{
@@ -294,6 +251,14 @@ public class NetPipeClient {
 			System.out.println("Message digests don't match, exiting...");
 			System.exit(1);
 		}
+		
+		//get current TimeStamp
+		Instant now = Instant.now();
+		DateTimeFormatter TimeStamp = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
+		System.out.println("This is the localdatetime: " + TimeStamp.format(localDateTime));
+		//get current TimeStamp
+		
 		//byte[] to string for received_timebytes
 		String TimeStamp_string_received = new String(received_timebytes).trim();
 		System.out.println("TimeStamp received: " + TimeStamp_string_received);
@@ -308,9 +273,55 @@ public class NetPipeClient {
 			System.exit(1);
 		}
 		
-		//done sending, done waiting and checking//
+		//done receiving and checking//
 		
-		//4th step, send our own Signature (hash of all messages sent) and Timestamp, then wait for the server's// 
+		//-------------------------------------------pasted step---------------------------------------//
+		
+		//now sending//
+		
+		//digest (ClientHello and Session message)
+		HandshakeDigest handshake_digest = new HandshakeDigest();
+		try{
+			handshake_digest.update(handshake_message_1.getBytes());
+			handshake_digest.update(handshake_message_3.getBytes());
+		}
+		catch(Exception e){e.printStackTrace();}
+		byte[] final_digest = handshake_digest.digest();
+		
+		//System.out.println("MD1(local): " + Arrays.toString(final_digest));
+		
+		//ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
+		
+		//new//
+		String time_string = TimeStamp.format(localDateTime);
+		//new//
+		
+		byte[] time_bytes = time_string.getBytes();
+		
+		//LocalDateTime test_date_time = LocalDateTime.parse(new String(byteBuffer.array()).trim(), TimeStamp);
+		//System.out.println("This is the test: " + test_date_time);
+		
+		byte[] encrypted_final_digest = private_client_cryptoknight.encrypt(final_digest);
+		byte[] encrypted_TimeStamp = private_client_cryptoknight.encrypt(time_bytes);
+		
+		HandshakeMessage handshake_message_4 = new HandshakeMessage(HandshakeMessage.MessageType.CLIENTFINISHED);
+		
+		handshake_message_4.putParameter("Signature", Base64.getEncoder().encodeToString(encrypted_final_digest));
+		handshake_message_4.putParameter("TimeStamp", Base64.getEncoder().encodeToString(encrypted_TimeStamp));
+		
+		try{
+			//Thread.sleep(200);
+		}
+		catch(Exception e){e.printStackTrace();}
+		
+		try{
+			handshake_message_4.send(socket);
+		}
+		catch(Exception e){e.printStackTrace();}
+		
+		
+		
+		//4th step, wait for the server's Signature (hash of all messages sent) and Timestamp, then send our own// 
 		
 		//execute_handshake//
 		

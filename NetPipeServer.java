@@ -218,6 +218,51 @@ public class NetPipeServer {
 		DateTimeFormatter TimeStamp = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
 		
+		//-----------------------------pasted step--------------------------------------------//
+		
+		//first sending//
+		
+		//digest the client's messages and compare ServerHello
+		HandshakeDigest handshake_digest = new HandshakeDigest();
+		try{
+			handshake_digest.update(handshake_message_2.getBytes());
+		}
+		catch(Exception e){e.printStackTrace();}
+		byte[] final_digest = handshake_digest.digest();
+		
+		//get a new current TimeStamp
+		//Instant now = Instant.now();
+		//localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
+		//ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
+		
+		//new//
+		String time_string = TimeStamp.format(localDateTime);
+		//new//
+		
+		byte[] time_bytes = time_string.getBytes();
+		
+		byte[] encrypted_final_digest = private_server_cryptoknight.encrypt(final_digest);
+		byte[] encrypted_TimeStamp = private_server_cryptoknight.encrypt(time_bytes);
+		
+		HandshakeMessage handshake_message_5 = new HandshakeMessage(HandshakeMessage.MessageType.SERVERFINISHED);
+		
+		handshake_message_5.putParameter("Signature", Base64.getEncoder().encodeToString(encrypted_final_digest));
+		handshake_message_5.putParameter("TimeStamp", Base64.getEncoder().encodeToString(encrypted_TimeStamp));
+		
+		try{
+			//Thread.sleep(200);
+		}
+		catch(Exception e){e.printStackTrace();}
+		
+		try{
+			handshake_message_5.send(socket);
+		}
+		catch(Exception e){e.printStackTrace();}
+		
+		//done sending//
+		
+		//-----------------------------pasted step--------------------------------------------//
+		
 		//now receiving and then checking//
 		
 		HandshakeMessage handshake_message_4 = null;
@@ -277,46 +322,7 @@ public class NetPipeServer {
 			System.exit(1);
 		}
 		
-		//done receiving and checking, now sending//
-		
-		//digest the client's messages and compare ServerHello
-		HandshakeDigest handshake_digest = new HandshakeDigest();
-		try{
-			handshake_digest.update(handshake_message_2.getBytes());
-		}
-		catch(Exception e){e.printStackTrace();}
-		byte[] final_digest = handshake_digest.digest();
-		
-		//get a new current TimeStamp
-		//Instant now = Instant.now();
-		//localDateTime = LocalDateTime.ofInstant(now, ZoneId.systemDefault());
-		//ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(TimeStamp.format(localDateTime));
-		
-		//new//
-		String time_string = TimeStamp.format(localDateTime);
-		//new//
-		
-		byte[] time_bytes = time_string.getBytes();
-		
-		byte[] encrypted_final_digest = private_server_cryptoknight.encrypt(final_digest);
-		byte[] encrypted_TimeStamp = private_server_cryptoknight.encrypt(time_bytes);
-		
-		HandshakeMessage handshake_message_5 = new HandshakeMessage(HandshakeMessage.MessageType.SERVERFINISHED);
-		
-		handshake_message_5.putParameter("Signature", Base64.getEncoder().encodeToString(encrypted_final_digest));
-		handshake_message_5.putParameter("TimeStamp", Base64.getEncoder().encodeToString(encrypted_TimeStamp));
-		
-		try{
-			//Thread.sleep(200);
-		}
-		catch(Exception e){e.printStackTrace();}
-		
-		try{
-			handshake_message_5.send(socket);
-		}
-		catch(Exception e){e.printStackTrace();}
-		
-		//done sending//
+		//done receiving and checking//
 		
 		//4th step, receive client's Signature (hash of all messages sent) and TimeStamp, then send our own//
 		
