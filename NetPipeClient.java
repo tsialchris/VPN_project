@@ -325,19 +325,19 @@ public class NetPipeClient {
 		
 		//execute_handshake//
 		
-		//SWITCH to session mode//
 		
-		//encrypt the socket.getOutputStream
-		CipherOutputStream encrypted_out = sessioncipher.openEncryptedOutputStream(System.out);
-		
-		//decrypt the socket.getInputStream
-		CipherInputStream decrypted_in = sessioncipher.openDecryptedInputStream(System.in);
-		
-		//SWITCH to session mode//
-		
-		//forward traffic after the encryption//
 		try {
-            Forwarder.forwardStreams(decrypted_in, encrypted_out, socket.getInputStream(), socket.getOutputStream(), socket);
+			//SWITCH to session mode//
+			//encrypt the socket.getOutputStream
+			CipherOutputStream encrypted_out = sessioncipher.openEncryptedOutputStream(socket.getOutputStream());
+			
+			//decrypt the socket.getInputStream
+			CipherInputStream decrypted_in = sessioncipher.openDecryptedInputStream(socket.getInputStream());
+			
+			//SWITCH to session mode//
+		
+			//forward traffic after the encryption//
+            Forwarder.forwardStreams(System.in, System.out, decrypted_in, encrypted_out, socket);
         } catch (IOException ex) {
             System.out.println("Stream forwarding error\n");
             System.exit(1);
